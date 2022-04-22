@@ -60,6 +60,7 @@ app.post('/auth', function(request, response) {
         request.session.loggedin = true;
         request.session.username = username;
         // Redirect to home page
+        console.log("authentication went succesfully")
         response.redirect('/home');
       } else {
         response.send('Incorrect Username and/or Password!');
@@ -78,12 +79,14 @@ app.post('/auth', function(request, response) {
 //route for the homePage http://localhost:3000/home
 app.get('/home', function(request, response) {
   // If the user is loggedin
-  if (request.session.loggedin)
-    // show map
-		response.sendFile(path.join(__dirname + '/index.html'));
-		else
-		response.send('you have to sign in to view the map');
+  if (request.session.loggedin) {
+    //get markers from Db.
+    console.log("home page was sent to client")
+    response.sendFile(path.join(__dirname + '/index.html'));
 
+  } else {
+    response.send('you have to sign in to view the map');
+  }
 });
 
 
@@ -92,67 +95,99 @@ app.get('/home', function(request, response) {
 
 app.get('/register', function(request, response) {
   // Render login template
+  console.log("user requested registration page").
   response.sendFile(path.join(__dirname + '/register.html'));
 });
 
 
 
-
-app.post('/regToDb', function(request, response) {
-      // Capture the input fields
-      let username = request.body.username;
-      let password = request.body.password;
-      let secretQuestion = request.body.secretQuestion;
-      let secretAnswer = request.body.secretAnswer;
+app.get('/getLocations', function(request, response) {
 
 
-
-      // Ensure the input fields exists and are not empty
-      if (username && password) {
-
-        // Execute SQL query that'll select the account from the database based on the specified username and password
-        connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+      connection.query('SELECT * FROM locations',
+        function(error, results, fields) {
           // If there is an issue with the query, output the error
           if (error) throw error;
-          // If the account exists
-          if (results.length > 0) {
-            // means there is already a user with that name
-            request.session.canUserRegister = false;
-            response.send('Username already exists!');
+          //checks for error during work with SQL-Server
 
+          //send the resultSet that has the markers to the client
 
-          } else {
-
-            request.session.canUserRegister = true;
-            console.log(request.session.canUserRegister);
-
-            //if no such user in the db
-
-            var sql = "INSERT INTO accounts (`username`, `password`, `secretQuestion`, `secretAnswer`) VALUES (?)";
-
-
-            var values = [
-              username, password, secretQuestion, secretAnswer
-            ]
-            connection.query(sql, [values], function(err, result) {
-              if (err) throw err;
-              console.log("new user was entered to the database");
-							request.session.loggedin=true;
-							request.session.username = username;
-              response.redirect('/home');
-              response.end();
-            })
-
-
-
+          else {
+            console.log("locations were loaded from DB succesfully.");
+            response.writeHead(200, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
+              var data = JSON.stringify(results);
+              response.end(data);
+              console.log("maekers were went to client.");
           };
 
-        })
-      } else {
-        response.send('Please enter Username and Password!');
-        response.end();
-      }
-		});
+
+
+
+      })});
+
+
+
+
+
+
+
+      app.post('/regToDb', function(request, response) {
+        // Capture the input fields
+        let username = request.body.username;
+        let password = request.body.password;
+        let secretQuestion = request.body.secretQuestion;
+        let secretAnswer = request.body.secretAnswer;
+
+
+
+        // Ensure the input fields exists and are not empty
+        if (username && password) {
+
+          // Execute SQL query that'll select the account from the database based on the specified username and password
+          connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+            // If there is an issue with the query, output the error
+            if (error) throw error;
+            // If the account exists
+            if (results.length > 0) {
+              // means there is already a user with that name
+              request.session.canUserRegister = false;
+              response.send('Username already exists!');
+
+
+            } else {
+
+              request.session.canUserRegister = true;
+              console.log(request.session.canUserRegister);
+
+              //if no such user in the db
+
+              var sql = "INSERT INTO accounts (`username`, `password`, `secretQuestion`, `secretAnswer`) VALUES (?)";
+
+
+              var values = [
+                username, password, secretQuestion, secretAnswer
+              ]
+              connection.query(sql, [values], function(err, result) {
+                if (err) throw err;
+                console.log("new user was entered to the database");
+                request.session.loggedin = true;
+                request.session.username = username;
+                console.log("New user was added to the database")
+                console.log("Homepage was sent to the new user ")
+                response.redirect('/home');
+                response.end();
+              })
+
+
+
+            };
+
+          })
+        } else {
+          response.send('Please enter Username and Password!');
+          response.end();
+        }
+      });
 
 
       ////////////////////////////////////////////////////////////////////

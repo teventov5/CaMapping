@@ -22,84 +22,225 @@
 <body>
 	<div id="map"></div>
 	<button id="bringToCenter">Bring to Center</button>
-	<script >
-	let map;
-	var infoWindowLatLang;
-	function initMap() {
-	  //setting the map starting position and zoom.
-	  map = new google.maps.Map( document.getElementById( 'map' ), {
-	    center: {
-	      lat: 32.01345951663715,
-	      lng: 34.77160817977713
-	    },
-	    zoom: 7
-	  });
+	<script>
+		var campingSiteInfo = {
+			siteName: 'defaultSiteName',
+			costMoney: 'Default-free',
+			fireAllowed: "Default-No",
+			toString: function() {
+				return ("" + this.siteName + "\n" +
+					this.costMoney + "\n" +
+					this.fireAllowed + "\n");
 
-	  //setting a center button that will get us back to the begininng position.
+			}
+		}
 
-	const centerButton = document.querySelector( '#bringToCenter' );
+		let map;
+		var infoWindowLatLang;
+		var specificPlace = Object.create(campingSiteInfo);
 
-	centerButton.addEventListener( 'click', function( e ) {
-		e.preventDefault();
-		map.setCenter({
-	    lat: 32.01345951663715,
-	    lng: 34.77160817977713
-		});
-	});
+		function initMap() {
+			//setting the map starting position and zoom.
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {
+					lat: 32.01345951663715,
+					lng: 34.77160817977713
+				},
+				zoom: 7
+			});
 
+			//setting a center button that will get us back to the begininng position.
 
-	//getting coaordinates from pressing on screen.
+			const centerButton = document.querySelector('#bringToCenter');
 
-
-	map.addListener( 'click', function( mapsMouseEvent ) {
-		if ( infoWindowLatLang ) infoWindowLatLang.close();
-
-		infoWindowLatLang = new google.maps.InfoWindow({
-			position: mapsMouseEvent.latLng
-		});
-
-		infoWindowLatLang.setContent( mapsMouseEvent.latLng.toString() );
-		infoWindowLatLang.open( map );
-	});
-
+			centerButton.addEventListener('click', function(e) {
+				e.preventDefault();
+				map.setCenter({
+					lat: 32.01345951663715,
+					lng: 34.77160817977713
+				});
+			});
 
 
-	//adding a pin option so a user can pin a specific location.
+			//getting coaordinates from pressing on screen.
 
-	function MarkerControl( controlDiv, map ) {
-		const controlUI = document.createElement( 'div' );
-		controlUI.style.backgroundColor = '#fff';
-		controlUI.style.border = '2px solid #fff';
-		controlUI.style.borderRadius = '3px';
-		controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-		controlUI.style.cursor = 'pointer';
-		controlUI.style.margin = '10px';
-		controlDiv.appendChild( controlUI );
 
-		const controlText = document.createElement( 'img' );
-		controlText.style.padding = '5px';
-		controlText.title = 'Click to add a Marker';
-		controlText.src = 'https://maps.google.com/mapfiles/ms/icons/red-pushpin.png';
-		controlUI.appendChild( controlText );
+			map.addListener('click', function(mapsMouseEvent) {
+				if (infoWindowLatLang) infoWindowLatLang.close();
 
-		controlUI.addEventListener( 'click', function() {
-	    new google.maps.Marker({
-	  			position: infoWindowLatLang.position,
-	  			map: map
-	  		});
-		});
-	}
+				infoWindowLatLang = new google.maps.InfoWindow({
+					position: mapsMouseEvent.latLng
+				});
+
+				infoWindowLatLang.setContent(mapsMouseEvent.latLng.toString());
+				infoWindowLatLang.open(map);
+			});
 
 
 
-	const markerControlDiv = document.createElement( 'div' );
-	const markerControl = new MarkerControl( markerControlDiv, map );
-	markerControlDiv.index = 1;
-	map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push( markerControlDiv );
+			//adding a pin option so a user can pin a specific location.
 
-	}
+			function MarkerControl(controlDiv, map) {
+				const controlUI = document.createElement('div');
+				controlUI.style.backgroundColor = '#fff';
+				controlUI.style.border = '2px solid #fff';
+				controlUI.style.borderRadius = '3px';
+				controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+				controlUI.style.cursor = 'pointer';
+				controlUI.style.margin = '10px';
+				controlDiv.appendChild(controlUI);
+
+				const controlText = document.createElement('img');
+				controlText.style.padding = '5px';
+				controlText.title = 'Click to add a Marker';
+				controlText.src = 'https://maps.google.com/mapfiles/ms/icons/red-pushpin.png';
+				controlUI.appendChild(controlText);
+
+				controlUI.addEventListener('click', function() {
+					let infoWindow = new google.maps.InfoWindow({
+						content: specificPlace.toString()
+					});
+					infoWindow.maxWidth
+					let marker = new google.maps.Marker({
+						position: infoWindowLatLang.position,
+						map: map
+					});
+					marker.addListener('click', function() {
+						infoWindow.open(map, marker);
+
+					});
+				});
+			}
+
+			const markerControlDiv = document.createElement('div');
+			const markerControl = new MarkerControl(markerControlDiv, map);
+			markerControlDiv.index = 1;
+			map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(markerControlDiv);
+
+
+
+			// Add multiple markers to map
+			var markersLocations = locationsLoaded.getLatLang();
+
+			for (let i = 0; i < markersLocations.length; i++) {
+
+
+				const contentString =
+					'<div id="content">' +
+					'<div id="siteNotice">' +
+					"</div>" +
+					'<h1 id="firstHeading" class="firstHeading">Uluru</h1>' +
+					'<div id="bodyContent">' +
+					"<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large " +
+					"sandstone rock formation in the southern part of the " +
+					"Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) " +
+					"south west of the nearest large town, Alice Springs; 450&#160;km " +
+					"(280&#160;mi) by road. Kata Tjuta and Uluru are the two major " +
+					"features of the Uluru - Kata Tjuta National Park. Uluru is " +
+					"sacred to the Pitjantjatjara and Yankunytjatjara, the " +
+					"Aboriginal people of the area. It has many springs, waterholes, " +
+					"rock caves and ancient paintings. Uluru is listed as a World " +
+					"Heritage Site.</p>" +
+					'<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">' +
+					"https://en.wikipedia.org/w/index.php?title=Uluru</a> " +
+					"(last visited June 22, 2009).</p>" +
+					"</div>" +
+					"</div>";
+				let infowindowForEach = new google.maps.InfoWindow({
+					content: contentString,
+				});
+
+
+				let markerPosition = markersLocations[i];
+				// marker = new google.maps.Marker({
+				// 	position: markerPosition,
+				// 	map,
+				// 	title: "Hello World!",
+				// });
+				let marker = new google.maps.Marker({
+					position: markerPosition,
+					map: map
+				});
+
+
+			addEventListener('click', function() {
+					let infoWindow = new google.maps.InfoWindow({
+						content: contentString
+					});
+					infoWindow.maxWidth
+
+					marker.addListener('click', function() {
+						if(infoWindow)infoWindow.close();
+						infoWindow.open(map, marker);
+
+					});
+				});
+
+
+
+			}
+
+
+
+
+
+
+
+
+
+			// Place each marker on the map
+
+
+			// Center the map to fit all markers on the screen
+			// map.fitBounds(bounds);
+
+
+			// // Set zoom level
+			// var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+			// 	 this.setZoom(14);
+			// 	 google.maps.event.removeListener(boundsListener);
+			// });
+
+
+			// Load initialize function
+			// google.maps.event.addDomListener(window, 'load', initMap);
+
+
+
+
+		}
+	</script>
+
+
+	<script>
+		//script to load markers from the Db into a variable called locationsLoaded
+
+		function httpGet(theUrl) {
+			let xmlHttpReq = new XMLHttpRequest();
+			xmlHttpReq.open("GET", theUrl, false);
+			xmlHttpReq.send(null);
+			return xmlHttpReq.responseText;
+		}
+		var locationsLoaded = JSON.parse(httpGet("http://localhost:3000/getLocations"));
+		locationsLoaded.getLatLang = function() {
+
+			var latLangArr = [];
+
+			this.forEach(location => {
+				latLangArr.push({
+					lat: parseInt(location.latitude),
+					lng: parseInt(location.longitude)
+				});
+			});
+			return latLangArr;
+		}
 	</script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2EAjv1tOnx4DCctrhz-mNsDrfaidp_yI&callback=initMap" async defer></script>
+
+
+
+
+
 </body>
 
 </html>

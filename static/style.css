@@ -6,6 +6,10 @@
 body {
     background-color: #435165;
 }
+#mapCanvas {
+    width: 100%;
+    height: 650px;
+}
 .login {
     width: 400px;
     background-color: #ffffff;
