@@ -40,10 +40,9 @@ app.use(favicon(path.join(__dirname, 'images', 'favicon.ico')))
 // address to get there: http://localhost:3000/
 app.get('/', function(request, response) {
   // Render login template
-  if (request.session.loggedin){
+  if (request.session.loggedin) {
     response.sendFile(path.join(__dirname + '/index.html'));
-  }
-  else  response.sendFile(path.join(__dirname + '/login.html'));
+  } else response.sendFile(path.join(__dirname + '/login.html'));
 });
 
 //Next, i need to add a new route that will authenticate the user infront of the mySql database.
@@ -110,104 +109,108 @@ app.get('/register', function(request, response) {
 app.get('/getLocations', function(request, response) {
 
 
-      connection.query('SELECT * FROM locations',
-        function(error, results, fields) {
-          // If there is an issue with the query, output the error
-          if (error) throw error;
-          //checks for error during work with SQL-Server
+  connection.query('SELECT * FROM locations',
+    function(error, results, fields) {
+      // If there is an issue with the query, output the error
+      if (error) throw error;
+      //checks for error during work with SQL-Server
 
-          //send the resultSet that has the markers to the client
+      //send the resultSet that has the markers to the client
 
-          else {
-            console.log("locations were loaded from DB succesfully.");
-            response.writeHead(200, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
-              var data = JSON.stringify(results);
-              response.end(data);
-              console.log("markers were sent to client.");
-              console.log("////////////////////////////////////////////////");
+      else {
+        console.log("locations were loaded from DB succesfully.");
+        response.writeHead(200, {
+          'Content-Type': 'text/plain',
+          'Access-Control-Allow-Origin': '*'
+        });
+        var data = JSON.stringify(results);
+        response.end(data);
+        console.log("markers were sent to client.");
+        console.log("////////////////////////////////////////////////");
 
-          };
-
-
-
-
-      })});
+      };
 
 
 
 
+    })
+});
 
 
 
-      app.post('/regToDb', function(request, response) {
-        // Capture the input fields
-        let username = request.body.username;
-        let password = request.body.password;
-        let secretQuestion = request.body.secretQuestion;
-        let secretAnswer = request.body.secretAnswer;
 
 
 
-        // Ensure the input fields exists and are not empty
-        if (username && password) {
 
-          // Execute SQL query that'll select the account from the database based on the specified username and password
-          connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
-            // If there is an issue with the query, output the error
-            if (error) throw error;
-            // If the account exists
-            if (results.length > 0) {
-              // means there is already a user with that name
-              request.session.canUserRegister = false;
-              response.send('Username already exists!');
-
-
-            } else {
-
-              request.session.canUserRegister = true;
-              console.log(request.session.canUserRegister);
-
-              //if no such user in the db
-
-              var sql = "INSERT INTO accounts (`username`, `password`, `secretQuestion`, `secretAnswer`) VALUES (?)";
-
-
-              var values = [
-                username, password, secretQuestion, secretAnswer
-              ]
-              connection.query(sql, [values], function(err, result) {
-                if (err) throw err;
-                console.log("new user was entered to the database");
-                request.session.loggedin = true;
-                request.session.username = username;
-                console.log("New user was added to the database")
-                console.log("Homepage was sent to the new user ")
-                response.redirect('/home');
-                response.end();
-              })
+app.post('/regToDb', function(request, response) {
+  // Capture the input fields
+  let username = request.body.username;
+  let password = request.body.password;
+  let secretQuestion = request.body.secretQuestion;
+  let secretAnswer = request.body.secretAnswer;
 
 
 
-            };
+  // Ensure the input fields exists and are not empty
+  if (username && password) {
 
-          })
-        } else {
-          response.send('Please enter Username and Password!');
+    // Execute SQL query that'll select the account from the database based on the specified username and password
+    connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+      // If there is an issue with the query, output the error
+      if (error) throw error;
+      // If the account exists
+      if (results.length > 0) {
+        // means there is already a user with that name
+        request.session.canUserRegister = false;
+        response.send('Username already exists!');
+
+
+      } else {
+
+        request.session.canUserRegister = true;
+        console.log(request.session.canUserRegister);
+
+        //if no such user in the db
+
+        var sql = "INSERT INTO accounts (`username`, `password`, `secretQuestion`, `secretAnswer`) VALUES (?)";
+
+
+        var values = [
+          username, password, secretQuestion, secretAnswer
+        ]
+        connection.query(sql, [values], function(err, result) {
+          if (err) throw err;
+          console.log("new user was entered to the database");
+          request.session.loggedin = true;
+          request.session.username = username;
+          console.log("New user was added to the database")
+          console.log("Homepage was sent to the new user ")
+          response.redirect('/home');
           response.end();
-        }
-      });
+        })
+
+
+
+      };
+
+    })
+  } else {
+    response.send('Please enter Username and Password!');
+    response.end();
+  }
+});
 
 
 
 
 
-      app.get('/locations/*', function(request, response) {
-        response.sendFile(path.join(__dirname + '/HTML/'+request.params[0]+'.html'));
-      });
+app.get('/locations/*', function(request, response) {
+  response.sendFile(path.join(__dirname + '/HTML/' + request.params[0] + '.html'));
+});
 
-      ////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
-      //Finally, our Node.js server needs to listen on a port, so for testing purposes, we can use port 3000.
+//Finally, our Node.js server needs to listen on a port, so for testing purposes, we can use port 3000.
 
-      app.listen(3000);
-      console.log("Server is listening on port 3000...");
+app.listen(3000);
+console.log("Server is listening on port 3000...");

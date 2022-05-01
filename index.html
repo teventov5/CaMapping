@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>CaMapper</title>
 	<meta name="viewport" content="initial-scale=1.0">
@@ -23,7 +24,7 @@
 	<div id="map"></div>
 	<button id="bringToCenter">Bring to Center</button>
 	<script>
-	markerIcon= 'images/markerIcon.png';
+		markerIcon = 'images/markerIcon.png';
 
 
 		// var campingSiteInfo = {
@@ -106,7 +107,7 @@
 					infoWindow.maxWidth
 					let marker = new google.maps.Marker({
 						position: infoWindowLatLang.position,
-						icon:markerIcon,
+						icon: markerIcon,
 						map: map
 					});
 					marker.addListener('click', function() {
@@ -133,88 +134,65 @@
 
 			for (let i = 0; i < markersLocations.length; i++) {
 
-
-
-
 				let currMarkerPosition = markersLocations[i];
 
 				let marker = new google.maps.Marker({
 					position: currMarkerPosition,
-					icon:markerIcon,
-					title:	locationsLoaded.getLocationInfo()[i].name,
-					info:	locationsLoaded.getLocationInfo()[i].info,
-					englishName:	locationsLoaded.getLocationInfo()[i].englishName,
-					swimmingOption:	locationsLoaded.getLocationInfo()[i].swimmingOption,
-					waterSource:	locationsLoaded.getLocationInfo()[i].waterSource,
-					costMoney:	locationsLoaded.getLocationInfo()[i].costMoney,
-					toiletAvailable:	locationsLoaded.getLocationInfo()[i].toiletAvailable,
+					icon: markerIcon,
+					title: locationsLoaded.getLocationInfo()[i].name,
+					info: locationsLoaded.getLocationInfo()[i].info,
+					englishName: locationsLoaded.getLocationInfo()[i].englishName,
+					swimmingOption: locationsLoaded.getLocationInfo()[i].swimmingOption,
+					waterSource: locationsLoaded.getLocationInfo()[i].waterSource,
+					costMoney: locationsLoaded.getLocationInfo()[i].costMoney,
+					toiletAvailable: locationsLoaded.getLocationInfo()[i].toiletAvailable,
 					map: map
 				});
 
 
 
-					marker.addListener('click', function() {
-						console.log("marker clicked");
+				marker.addListener('click', function() {
+					console.log("marker clicked");
 
-						var markerValues=JSON.stringify(
-							{
-								swimmingOption:	locationsLoaded.getLocationInfo()[i].swimmingOption,
-								waterSource:	locationsLoaded.getLocationInfo()[i].waterSource,
-								costMoney:	locationsLoaded.getLocationInfo()[i].costMoney,
-								toiletAvailable:	locationsLoaded.getLocationInfo()[i].toiletAvailable,
-
-							});
-							let parsedMarkerValues=JSON.parse(markerValues);
-
-							console.log(parsedMarkerValues);
-
-
-
-
-						// infoWindow.setContent(marker.title+'<p id="hook">Hello World!</p>'+marker.info);
-						let tempContent=(
-							'<div id="content" dir="rtl">' +
-							'<div id="siteNotice">' +
-							"</div>" +
-							'<h1 id="firstHeading" class="firstHeading">'+marker.title+'</h1>' +
-							'<div id="bodyContent">' +
-							"<p style='font-size:20px'><b>"+"מותר לשחות?"+"\t"+parsedMarkerValues.swimmingOption+"</b>,"+
-							"<p style='font-size:20px'><b>"+"מקור מים?"+"\t"+parsedMarkerValues.waterSource+"</b>,"+
-							"<p style='font-size:20px'><b>"+"עלות כספית?"+"\t"+parsedMarkerValues.costMoney+"</b>,"+
-							"<p style='font-size:20px'><b>"+"שרותים זמינים באתר?"+"\t"+parsedMarkerValues.toiletAvailable+"</b>,"+
-							// "<p style='font-size:20px'><b>"+marker.info+"</b>,"+
-							'<p><a style="font-size: 30px"+ href=/'+"locations/"+marker.englishName+'?locationValuesFromDb='+markerValues+'>לחץ כאן למידע מורחב</a>' +
-							"</div>" +
-							"</div>")
-
-
-
-						infoWindow.setContent(tempContent);
-						infoWindow.minHeight=300;
-						infoWindow.minWidth=300;
-
-
-
-
-						console.log(infoWindow);
-						infoWindow.open(map, marker);
+					var markerValues = JSON.stringify({
+						swimmingOption: locationsLoaded.getLocationInfo()[i].swimmingOption,
+						waterSource: locationsLoaded.getLocationInfo()[i].waterSource,
+						costMoney: locationsLoaded.getLocationInfo()[i].costMoney,
+						toiletAvailable: locationsLoaded.getLocationInfo()[i].toiletAvailable,
 
 					});
+					let parsedMarkerValues = JSON.parse(markerValues);
+
+					console.log(parsedMarkerValues);
+
+
+					// infoWindow.setContent(marker.title+'<p id="hook">Hello World!</p>'+marker.info);
+					let tempContent = (
+						'<div id="content" dir="rtl">' +
+						'<div id="siteNotice">' +
+						"</div>" +
+						'<h1 style="color: SeaGreen; id="firstHeading" class="firstHeading">' + marker.title + '</h1>' +
+						'<div id="bodyContent">' +
+						"<p style='font-size:20px'><b>" + "מותר לשחות?" + "\t" + parsedMarkerValues.swimmingOption + "</b>," +
+						"<p style='font-size:20px'><b>" + "מקור מים?" + "\t" + parsedMarkerValues.waterSource + "</b>," +
+						"<p style='font-size:20px'><b>" + "עלות כספית?" + "\t" + parsedMarkerValues.costMoney + "</b>," +
+						"<p style='font-size:20px'><b>" + "שרותים זמינים באתר?" + "\t" + parsedMarkerValues.toiletAvailable + "</b>," +
+						// "<p style='font-size:20px'><b>"+marker.info+"</b>,"+
+						'<p><a style="font-size: 30px"+ href=/' + "locations/" + marker.englishName + '?locationValuesFromDb=' + markerValues + '>לחץ כאן למידע מורחב</a>' +
+						"</div>" +
+						"</div>")
 
 
 
+					infoWindow.setContent(tempContent);
+					infoWindow.minHeight = 300;
+					infoWindow.minWidth = 300;
+
+					infoWindow.open(map, marker);
+
+				});
 
 			}
-
-
-
-
-
-
-
-
-
-
 
 		}
 	</script>
@@ -232,7 +210,7 @@
 		var locationsLoaded = JSON.parse(httpGet("http://localhost:3000/getLocations"));
 
 
-//parsing the information received from DB into object i can use
+		//parsing the information received from DB into object i can use
 
 		locationsLoaded.getLatLang = function() {
 
@@ -247,19 +225,19 @@
 			return latLangArr;
 		}
 
-		locationsLoaded.getLocationInfo=function(){
+		locationsLoaded.getLocationInfo = function() {
 
 			var locationInfoArr = [];
 
 			this.forEach(location => {
 				locationInfoArr.push({
 					name: location.name,
-					info:location.info,
-					englishName:location.englishName,
-					swimmingOption:location.swimmingOption,
-					waterSource:location.waterSource,
-					costMoney:location.costMoney,
-					toiletAvailable:location.toiletAvailable
+					info: location.info,
+					englishName: location.englishName,
+					swimmingOption: location.swimmingOption,
+					waterSource: location.waterSource,
+					costMoney: location.costMoney,
+					toiletAvailable: location.toiletAvailable
 				});
 			});
 			return locationInfoArr;

@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-  <head>
-    <meta charset="utf-8">
-    <title>nahalAmud</title>
-    <link href="/infoPageStyle.css" rel="stylesheet" type="text/css">
-  </head>
-  <body>
 
+<head>
+  <meta charset="utf-8">
+  <title>nahalAmud</title>
+  <link href="/infoPageStyle.css" rel="stylesheet" type="text/css">
+</head>
 
+<body>
 
-
-
-
-    <div class="wrapText"style="direction:rtl; max-width: 700px ">
+  <div class="wrapText" style="direction:rtl; max-width: 700px ">
 
     <h1>שמורת טבע נחל עמוד</h1>
     <p>
@@ -30,18 +27,15 @@
     <div>
       <ul>
 
-    </ul>
+      </ul>
     </div>
 
 
-   </div>
-   <img src="/images/nahalAmud.jpg"
-    alt="nahalAmud picture";
-    width="500"
-    height="400"/>
+  </div>
+  <img src="/images/nahalAmud.jpg" alt="nahalAmud picture" ; width="500" height="400" />
 
 
-    <script>
+  <script>
     const queryString = window.location.search;
 
     const urlParams = new URLSearchParams(queryString);
@@ -49,30 +43,28 @@
     const locationValuesFromDb = JSON.parse(urlParams.get('locationValuesFromDb'))
 
     console.log(locationValuesFromDb);
-    </script>
+  </script>
 
 
-    <script>
-
+  <script>
     var node = document.createElement('li');
-    node.appendChild(document.createTextNode('מותר לשחות: '+locationValuesFromDb.swimmingOption));
+    node.appendChild(document.createTextNode('מותר לשחות: ' + locationValuesFromDb.swimmingOption));
     document.querySelector('ul').appendChild(node);
 
     var node2 = document.createElement('li');
-    node2.appendChild(document.createTextNode('מקור מים: '+locationValuesFromDb.waterSource));
+    node2.appendChild(document.createTextNode('מקור מים: ' + locationValuesFromDb.waterSource));
     document.querySelector('ul').appendChild(node2);
 
     var node3 = document.createElement('li');
-    node3.appendChild(document.createTextNode('עלות כספית: '+locationValuesFromDb.costMoney));
+    node3.appendChild(document.createTextNode('עלות כספית: ' + locationValuesFromDb.costMoney));
     document.querySelector('ul').appendChild(node3);
 
 
     var node4 = document.createElement('li');
-    node4.appendChild(document.createTextNode('שירותים זמינים באתר: '+locationValuesFromDb.toiletAvailable));
+    node4.appendChild(document.createTextNode('שירותים זמינים באתר: ' + locationValuesFromDb.toiletAvailable));
     document.querySelector('ul').appendChild(node4);
-    </script>
+  </script>
 
+</body>
 
-
-  </body>
 </html>
