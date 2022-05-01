@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-	<title>Basic Map</title>
+	<title>CaMapper</title>
 	<meta name="viewport" content="initial-scale=1.0">
 	<meta charset="utf-8">
 	<style>
@@ -17,27 +16,31 @@
 			padding: 0;
 		}
 	</style>
+
 </head>
 
 <body>
 	<div id="map"></div>
 	<button id="bringToCenter">Bring to Center</button>
 	<script>
-		var campingSiteInfo = {
-			siteName: 'defaultSiteName',
-			costMoney: 'Default-free',
-			fireAllowed: "Default-No",
-			toString: function() {
-				return ("" + this.siteName + "\n" +
-					this.costMoney + "\n" +
-					this.fireAllowed + "\n");
+	markerIcon= 'images/markerIcon.png';
 
-			}
-		}
+
+		// var campingSiteInfo = {
+		// 	siteName: 'defaultSiteName',
+		// 	costMoney: 'Default-free',
+		// 	fireAllowed: "Default-No",
+		// 	toString: function() {
+		// 		return ("" + this.siteName + "\n" +
+		// 			this.costMoney + "\n" +
+		// 			this.fireAllowed + "\n");
+		//
+		// 	}
+		// }
 
 		let map;
 		var infoWindowLatLang;
-		var specificPlace = Object.create(campingSiteInfo);
+		// var specificPlace = Object.create(campingSiteInfo);
 
 		function initMap() {
 			//setting the map starting position and zoom.
@@ -103,6 +106,7 @@
 					infoWindow.maxWidth
 					let marker = new google.maps.Marker({
 						position: infoWindowLatLang.position,
+						icon:markerIcon,
 						map: map
 					});
 					marker.addListener('click', function() {
@@ -121,60 +125,82 @@
 
 			// Add multiple markers to map
 			var markersLocations = locationsLoaded.getLatLang();
+			const infoWindow = new google.maps.InfoWindow({
+				content: "empty for now",
+				minWidth: 200,
+				minHeight: 200,
+			});
 
 			for (let i = 0; i < markersLocations.length; i++) {
 
 
-				const contentString =
-					'<div id="content">' +
-					'<div id="siteNotice">' +
-					"</div>" +
-					'<h1 id="firstHeading" class="firstHeading">Uluru</h1>' +
-					'<div id="bodyContent">' +
-					"<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large " +
-					"sandstone rock formation in the southern part of the " +
-					"Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) " +
-					"south west of the nearest large town, Alice Springs; 450&#160;km " +
-					"(280&#160;mi) by road. Kata Tjuta and Uluru are the two major " +
-					"features of the Uluru - Kata Tjuta National Park. Uluru is " +
-					"sacred to the Pitjantjatjara and Yankunytjatjara, the " +
-					"Aboriginal people of the area. It has many springs, waterholes, " +
-					"rock caves and ancient paintings. Uluru is listed as a World " +
-					"Heritage Site.</p>" +
-					'<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">' +
-					"https://en.wikipedia.org/w/index.php?title=Uluru</a> " +
-					"(last visited June 22, 2009).</p>" +
-					"</div>" +
-					"</div>";
-				let infowindowForEach = new google.maps.InfoWindow({
-					content: contentString,
-				});
 
 
-				let markerPosition = markersLocations[i];
-				// marker = new google.maps.Marker({
-				// 	position: markerPosition,
-				// 	map,
-				// 	title: "Hello World!",
-				// });
+				let currMarkerPosition = markersLocations[i];
+
 				let marker = new google.maps.Marker({
-					position: markerPosition,
+					position: currMarkerPosition,
+					icon:markerIcon,
+					title:	locationsLoaded.getLocationInfo()[i].name,
+					info:	locationsLoaded.getLocationInfo()[i].info,
+					englishName:	locationsLoaded.getLocationInfo()[i].englishName,
+					swimmingOption:	locationsLoaded.getLocationInfo()[i].swimmingOption,
+					waterSource:	locationsLoaded.getLocationInfo()[i].waterSource,
+					costMoney:	locationsLoaded.getLocationInfo()[i].costMoney,
+					toiletAvailable:	locationsLoaded.getLocationInfo()[i].toiletAvailable,
 					map: map
 				});
 
 
-			addEventListener('click', function() {
-					let infoWindow = new google.maps.InfoWindow({
-						content: contentString
-					});
-					infoWindow.maxWidth
 
 					marker.addListener('click', function() {
-						if(infoWindow)infoWindow.close();
+						console.log("marker clicked");
+
+						var markerValues=JSON.stringify(
+							{
+								swimmingOption:	locationsLoaded.getLocationInfo()[i].swimmingOption,
+								waterSource:	locationsLoaded.getLocationInfo()[i].waterSource,
+								costMoney:	locationsLoaded.getLocationInfo()[i].costMoney,
+								toiletAvailable:	locationsLoaded.getLocationInfo()[i].toiletAvailable,
+
+							});
+							let parsedMarkerValues=JSON.parse(markerValues);
+
+							console.log(parsedMarkerValues);
+
+
+
+
+						// infoWindow.setContent(marker.title+'<p id="hook">Hello World!</p>'+marker.info);
+						let tempContent=(
+							'<div id="content" dir="rtl">' +
+							'<div id="siteNotice">' +
+							"</div>" +
+							'<h1 id="firstHeading" class="firstHeading">'+marker.title+'</h1>' +
+							'<div id="bodyContent">' +
+							"<p style='font-size:20px'><b>"+"מותר לשחות?"+"\t"+parsedMarkerValues.swimmingOption+"</b>,"+
+							"<p style='font-size:20px'><b>"+"מקור מים?"+"\t"+parsedMarkerValues.waterSource+"</b>,"+
+							"<p style='font-size:20px'><b>"+"עלות כספית?"+"\t"+parsedMarkerValues.costMoney+"</b>,"+
+							"<p style='font-size:20px'><b>"+"שרותים זמינים באתר?"+"\t"+parsedMarkerValues.toiletAvailable+"</b>,"+
+							// "<p style='font-size:20px'><b>"+marker.info+"</b>,"+
+							'<p><a style="font-size: 30px"+ href=/'+"locations/"+marker.englishName+'?locationValuesFromDb='+markerValues+'>לחץ כאן למידע מורחב</a>' +
+							"</div>" +
+							"</div>")
+
+
+
+						infoWindow.setContent(tempContent);
+						infoWindow.minHeight=300;
+						infoWindow.minWidth=300;
+
+
+
+
+						console.log(infoWindow);
 						infoWindow.open(map, marker);
 
 					});
-				});
+
 
 
 
@@ -186,24 +212,6 @@
 
 
 
-
-
-			// Place each marker on the map
-
-
-			// Center the map to fit all markers on the screen
-			// map.fitBounds(bounds);
-
-
-			// // Set zoom level
-			// var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
-			// 	 this.setZoom(14);
-			// 	 google.maps.event.removeListener(boundsListener);
-			// });
-
-
-			// Load initialize function
-			// google.maps.event.addDomListener(window, 'load', initMap);
 
 
 
@@ -222,17 +230,40 @@
 			return xmlHttpReq.responseText;
 		}
 		var locationsLoaded = JSON.parse(httpGet("http://localhost:3000/getLocations"));
+
+
+//parsing the information received from DB into object i can use
+
 		locationsLoaded.getLatLang = function() {
 
 			var latLangArr = [];
 
 			this.forEach(location => {
 				latLangArr.push({
-					lat: parseInt(location.latitude),
-					lng: parseInt(location.longitude)
+					lat: parseFloat(location.latitude),
+					lng: parseFloat(location.longitude)
 				});
 			});
 			return latLangArr;
+		}
+
+		locationsLoaded.getLocationInfo=function(){
+
+			var locationInfoArr = [];
+
+			this.forEach(location => {
+				locationInfoArr.push({
+					name: location.name,
+					info:location.info,
+					englishName:location.englishName,
+					swimmingOption:location.swimmingOption,
+					waterSource:location.waterSource,
+					costMoney:location.costMoney,
+					toiletAvailable:location.toiletAvailable
+				});
+			});
+			return locationInfoArr;
+
 		}
 	</script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2EAjv1tOnx4DCctrhz-mNsDrfaidp_yI&callback=initMap" async defer></script>

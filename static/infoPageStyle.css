@@ -1,0 +1,23 @@
+* {
+  font-family:  Guttman Hatzvi;
+}
+
+
+h1 {
+  color: SeaGreen;
+}
+
+
+p,
+li {
+  font-size: 23px;
+}
+
+
+a {
+  text-decoration: none;
+}
+
+style {
+  direction: rtl;
+}

@@ -28,7 +28,10 @@ app.use(express.urlencoded({
   extended: true
 }));
 app.use(express.static(path.join(__dirname, 'static')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
+var favicon = require('serve-favicon')
+app.use(favicon(path.join(__dirname, 'images', 'favicon.ico')))
 
 
 //i need to declare the login route that will output login.html file to the client using a GET request.
@@ -37,7 +40,10 @@ app.use(express.static(path.join(__dirname, 'static')));
 // address to get there: http://localhost:3000/
 app.get('/', function(request, response) {
   // Render login template
-  response.sendFile(path.join(__dirname + '/login.html'));
+  if (request.session.loggedin){
+    response.sendFile(path.join(__dirname + '/index.html'));
+  }
+  else  response.sendFile(path.join(__dirname + '/login.html'));
 });
 
 //Next, i need to add a new route that will authenticate the user infront of the mySql database.
@@ -117,7 +123,9 @@ app.get('/getLocations', function(request, response) {
             response.writeHead(200, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
               var data = JSON.stringify(results);
               response.end(data);
-              console.log("maekers were went to client.");
+              console.log("markers were sent to client.");
+              console.log("////////////////////////////////////////////////");
+
           };
 
 
@@ -189,6 +197,13 @@ app.get('/getLocations', function(request, response) {
         }
       });
 
+
+
+
+
+      app.get('/locations/*', function(request, response) {
+        response.sendFile(path.join(__dirname + '/HTML/'+request.params[0]+'.html'));
+      });
 
       ////////////////////////////////////////////////////////////////////
 

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <title>yarkon</title>
+    <link href="/infoPageStyle.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+
+
+    <div class="wrapText"style="direction:rtl; max-width: 700px ">
+
+    <h1>מקורות הירקון</h1>
+    <p>
+
+      בין ראש העין לפתח תקווה נמצאת הריאה הירוקה והטבעית של גוש דן, בה אפשר לראות מהיכן נובע נחל הירקון שאורכו כ-28 ק"מ.
+      בגן לאומי ירקון יש ברכות שכשוך טבעיות, אתרים היסטוריים והרבה צל בחורשת האקליפטוס הוותיקה.
+       במרכז החורשה יש חניון לילה עם מקלחות, שירותים, משטחי עבודה וכיורים מסודרים.
+       מומלץ למי שמחפש קמפינג קרוב לבית.
+        יש להירשם באתר רשות הטבע והגנים.
+
+    </p>
+    <p>לחזרה למפה הראשית: <a href="/home">לחץ כאן</a></p>
+
+
+<div>
+  <ul>
+
+</ul>
+</div>
+
+   </div>
+   <img src="/images/yarkon.jpg"
+    alt="yarkon picture";
+    width="500"
+    height="400"/>
+
+
+
+<script>
+const queryString = window.location.search;
+
+const urlParams = new URLSearchParams(queryString);
+
+const locationValuesFromDb = JSON.parse(urlParams.get('locationValuesFromDb'))
+
+console.log(locationValuesFromDb);
+</script>
+
+
+
+
+<script>
+
+var node = document.createElement('li');
+node.appendChild(document.createTextNode('מותר לשחות: '+locationValuesFromDb.swimmingOption));
+document.querySelector('ul').appendChild(node);
+
+var node2 = document.createElement('li');
+node2.appendChild(document.createTextNode('מקור מים: '+locationValuesFromDb.waterSource));
+document.querySelector('ul').appendChild(node2);
+
+var node3 = document.createElement('li');
+node3.appendChild(document.createTextNode('עלות כספית: '+locationValuesFromDb.costMoney));
+document.querySelector('ul').appendChild(node3);
+
+
+var node4 = document.createElement('li');
+node4.appendChild(document.createTextNode('שירותים זמינים באתר: '+locationValuesFromDb.toiletAvailable));
+document.querySelector('ul').appendChild(node4);
+</script>
+
+  </body>
+</html>
