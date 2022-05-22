@@ -3,6 +3,7 @@
 }
 
 
+
 h1 {
   color: SeaGreen;
 }
@@ -20,4 +21,14 @@ a {
 
 style {
   direction: rtl;
+}
+
+.picture {
+  position:relative;
+   left:300px; top:50px;
+}
+
+.wholePage {
+  background-image: url("/images/infopageBackground.png");
+
 }

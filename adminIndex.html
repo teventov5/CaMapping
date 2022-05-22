@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>CaMapper</title>
+	<title>CaMapper-Admin privileges</title>
 	<meta name="viewport" content="initial-scale=1.0">
 	<meta charset="utf-8">
 	<style>
@@ -26,8 +26,22 @@
 	<script>
 		markerIcon = 'images/markerIcon.png';
 
+
+		var campingSiteInfo = {
+			siteName: 'defaultSiteName',
+			costMoney: 'Default-free',
+			fireAllowed: "Default-No",
+			toString: function() {
+				return ("" + this.siteName + "\n" +
+					this.costMoney + "\n" +
+					this.fireAllowed + "\n");
+
+			}
+		}
+
 		let map;
 		var infoWindowLatLang;
+		var specificPlace = Object.create(campingSiteInfo);
 
 		function initMap() {
 			//setting the map starting position and zoom.
@@ -39,7 +53,83 @@
 				zoom: 7
 			});
 
-	
+			//setting a center button that will get us back to the begininng position.
+
+			const centerButton = document.querySelector('#bringToCenter');
+
+			centerButton.addEventListener('click', function(e) {
+				e.preventDefault();
+				map.setCenter({
+					lat: 32.01345951663715,
+					lng: 34.77160817977713
+				});
+			});
+
+
+			//getting coaordinates from pressing on screen.
+
+
+			map.addListener('click', function(mapsMouseEvent) {
+				if (infoWindowLatLang) infoWindowLatLang.close();
+
+				infoWindowLatLang = new google.maps.InfoWindow({
+					position: mapsMouseEvent.latLng
+				});
+
+				infoWindowLatLang.setContent(mapsMouseEvent.latLng.toString());
+				infoWindowLatLang.open(map);
+			});
+
+
+
+			//adding a pin option so a user can pin a specific location.
+
+			function MarkerControl(controlDiv, map) {
+				const controlUI = document.createElement('div');
+				controlUI.style.backgroundColor = '#fff';
+				controlUI.style.border = '2px solid #fff';
+				controlUI.style.borderRadius = '3px';
+				controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+				controlUI.style.cursor = 'pointer';
+				controlUI.style.margin = '10px';
+				controlDiv.appendChild(controlUI);
+
+				const controlText = document.createElement('img');
+				controlText.style.padding = '5px';
+				controlText.title = 'Click to add a new location to the database and map';
+				controlText.src = 'http://maps.google.com/mapfiles/kml/shapes/campfire.png';
+				controlText.size = '10px'
+				controlUI.appendChild(controlText);
+
+				controlUI.addEventListener('click', function() {
+
+						//add click actions here
+
+						document.location.href = '/addNewLocation';
+
+
+
+					}
+
+				);
+			}
+
+
+
+			//////////////////////////////////////////////////
+
+
+
+
+
+
+			////////////////////////////////////////////////////
+
+			const markerControlDiv = document.createElement('div');
+			const markerControl = new MarkerControl(markerControlDiv, map);
+			markerControlDiv.index = 1;
+			map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(markerControlDiv);
+
 
 
 			// Add multiple markers to map

@@ -42,7 +42,10 @@ app.get('/', function(request, response) {
   // Render login template
   if (request.session.loggedin) {
     response.sendFile(path.join(__dirname + '/index.html'));
-  } else response.sendFile(path.join(__dirname + '/login.html'));
+  } else{
+    console.log("login page requested");
+    response.sendFile(path.join(__dirname + '/login.html'));
+  }
 });
 
 //Next, i need to add a new route that will authenticate the user infront of the mySql database.
@@ -99,8 +102,7 @@ app.get('/home', function(request, response) {
 //in order to set path for registration page
 
 app.get('/register', function(request, response) {
-  // Render login template
-  console.log("user requested registration page").
+  console.log("user requested registration page")
   response.sendFile(path.join(__dirname + '/register.html'));
 });
 
@@ -140,7 +142,7 @@ app.get('/getLocations', function(request, response) {
 
 
 
-
+//registers a user into the database
 
 app.post('/regToDb', function(request, response) {
   // Capture the input fields
@@ -202,11 +204,87 @@ app.post('/regToDb', function(request, response) {
 
 
 
-
+//handles requests for extended info pages (inside a marker)
 
 app.get('/locations/*', function(request, response) {
   response.sendFile(path.join(__dirname + '/HTML/' + request.params[0] + '.html'));
 });
+
+
+//admin authentication
+app.post('/adminAuth', function(request, response) {
+  // Capture the input fields
+  let username = request.body.username;
+  let password = request.body.password;
+  // Ensure the input fields exists and are not empty
+  if (username && password) {
+    // Execute SQL query that'll select the account from the database based on the specified username and password
+    connection.query('SELECT * FROM admins WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+      // If there is an issue with the query, output the error
+      if (error) throw error;
+      // If the account exists
+      if (results.length > 0) {
+        // Authenticate the user
+        request.session.adminLoggedin = true;
+        request.session.username = username;
+        // Redirect to home page
+        console.log("admin authentication went succesfully")
+        response.redirect('/adminHome');
+      } else {
+        response.send('Incorrect admin credentials!');
+      }
+      response.end();
+    });
+  } else {
+    response.send('Please enter Username and Password!');
+    response.end();
+  }
+});
+
+
+
+
+app.get('/adminLogin', function(request, response) {
+  // Render login template
+  if (request.session.adminLoggedin) {
+    response.redirect('/adminHome');
+  } else{
+    console.log("admin login page requested");
+    response.sendFile(path.join(__dirname + '/adminLogin.html'));
+  }
+});
+
+
+//route for the homePage http://localhost:3000/adminHome
+app.get('/adminHome', function(request, response) {
+  // If the user is loggedin
+  if (request.session.adminLoggedin) {
+    console.log("admin home page was sent to client")
+    response.sendFile(path.join(__dirname + '/adminIndex.html'));
+
+  } else {
+    response.send('you have to sign in as admin to access here');
+  }
+});
+
+
+app.get('/addNewLocation', function(request, response) {
+  // If the user is loggedin
+  if (request.session.adminLoggedin) {
+    console.log("user wants to add a new location (will add info to DB and create new HTML file)");
+    response.sendFile(path.join(__dirname + '/addNewLocation.html'));
+
+  } else {
+    response.send('you have to sign in as admin to access here');
+  }
+});
+
+
+
+
+
+
+
 
 ////////////////////////////////////////////////////////////////////
 
