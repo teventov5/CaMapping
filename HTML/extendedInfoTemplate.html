@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+
+<head>
+  <meta charset="utf-8">
+  <title>aboRabah</title>
+  <link href="/infoPageStyle.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+
+
+  <div class="wholePage">
+
+    <div class="picture">
+      <img src="" id="imageBox" alt="location picture"; width="800" height="500" align="left"  />
+    </div>
+
+
+    <div class="wrapText" style="direction:rtl; max-width: 700px ">
+
+      <h1 id=title>טקסט כותרת שעומד להתחלף עם השם מבסיס הנתונים</h1>
+        <p id=text>
+            טקסט מידע מורחב שהולך להתחלף עם המידע מבסיס הנתונים
+        </p>
+
+
+      <p>לחזרה למפה הראשית: <a href="/home">לחץ כאן</a></p>
+
+      <div>
+        <ul>
+
+        </ul>
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+<!-- the following script initializes the variables with relavent info from index page and from db  -->
+
+
+  <script>
+
+  const queryString = window.location.search;
+
+  const urlParams = new URLSearchParams(queryString);
+
+
+  const locationValuesFromIndex = JSON.parse(urlParams.get('locationValuesFromDb'))  //getting the locations  strigified at index.html
+
+
+  console.log(locationValuesFromIndex);
+  const pictureString="/images/"+locationValuesFromIndex.values.englishName+".jpg";
+  document.getElementById('imageBox').src = pictureString;
+
+
+// getting the specific location details from the db by sending the english name of a location
+
+
+var data = "englishName="+locationValuesFromIndex.values.englishName;
+var specificLocationValues;
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function() {
+  //if we get proper values back lets change the relevent texts
+  if(this.readyState === 4) {
+    specificLocationValues=JSON.parse(this.responseText)[0]
+    document.getElementById('title').innerHTML=specificLocationValues.name;
+    document.getElementById('text').innerHTML=specificLocationValues.info;
+
+    // console.log(specificLocationValues);
+  }
+});
+
+xhr.open("POST", "http://localhost:3000/getSpecificLocation");
+xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+xhr.send(data);
+
+
+
+  </script>
+
+
+<!-- the following script takes the info sent from the index page and add it to the template -->
+
+  <script>
+    var node = document.createElement('li');
+    node.appendChild(document.createTextNode('מותר לשחות: ' + locationValuesFromIndex.values.swimmingOption));
+    document.querySelector('ul').appendChild(node);
+
+    var node2 = document.createElement('li');
+    node2.appendChild(document.createTextNode('מקור מים: ' + locationValuesFromIndex.values.waterSource));
+    document.querySelector('ul').appendChild(node2);
+
+    var node3 = document.createElement('li');
+    node3.appendChild(document.createTextNode('עלות כספית: ' + locationValuesFromIndex.values.costMoney));
+    document.querySelector('ul').appendChild(node3);
+
+
+    var node4 = document.createElement('li');
+    node4.appendChild(document.createTextNode('שירותים זמינים באתר: ' + locationValuesFromIndex.values.toiletAvailable));
+    document.querySelector('ul').appendChild(node4);
+
+
+
+    //changing the text to the info text received from the db
+
+
+
+  </script>
+
+</body>
+
+</html>

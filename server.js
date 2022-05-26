@@ -4,6 +4,8 @@ const mysql = require('mysql');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const bodyParser = require('body-parser');
+const upload=require('express-fileupload')
 
 //creating a connection to the mySql database
 const connection = mysql.createConnection({
@@ -27,11 +29,21 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
+
+
+//to enable body parsing
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
 app.use(express.static(path.join(__dirname, 'static')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 var favicon = require('serve-favicon')
 app.use(favicon(path.join(__dirname, 'images', 'favicon.ico')))
+
+app.use(upload())
+
 
 
 //i need to declare the login route that will output login.html file to the client using a GET request.
@@ -91,8 +103,14 @@ app.get('/home', function(request, response) {
     //get markers from Db.
     console.log("home page was sent to client")
     response.sendFile(path.join(__dirname + '/index.html'));
+  }
+else if(request.session.adminLoggedin){
+  console.log("admin home page was sent to client")
+  response.sendFile(path.join(__dirname + '/adminIndex.html'));
+}
 
-  } else {
+
+   else {
     response.send('you have to sign in to view the map');
   }
 });
@@ -207,7 +225,7 @@ app.post('/regToDb', function(request, response) {
 //handles requests for extended info pages (inside a marker)
 
 app.get('/locations/*', function(request, response) {
-  response.sendFile(path.join(__dirname + '/HTML/' + request.params[0] + '.html'));
+  response.sendFile(path.join(__dirname + '/HTML/extendedInfoTemplate'+ '.html'));
 });
 
 
@@ -243,7 +261,7 @@ app.post('/adminAuth', function(request, response) {
 
 
 
-
+//sends admin login page to client
 app.get('/adminLogin', function(request, response) {
   // Render login template
   if (request.session.adminLoggedin) {
@@ -268,8 +286,9 @@ app.get('/adminHome', function(request, response) {
 });
 
 
+//route for the addNewLocation page
 app.get('/addNewLocation', function(request, response) {
-  // If the user is loggedin
+  // If the admin is loggedin
   if (request.session.adminLoggedin) {
     console.log("user wants to add a new location (will add info to DB and create new HTML file)");
     response.sendFile(path.join(__dirname + '/addNewLocation.html'));
@@ -281,9 +300,78 @@ app.get('/addNewLocation', function(request, response) {
 
 
 
+app.post('/getSpecificLocation', function(request, response) {
+let specificEnglishName=request.body.englishName;
+  connection.query('select * from locations where englishname=? ' , [specificEnglishName],  function(error, results, fields) {
+      // If there is an issue with the query, output the error
+      if (error) throw error;
+      //checks for error during work with SQL-Server
+
+      //send the resultSet that has the markers to the client
+
+      else {
+        console.log("specific location was loaded from DB succesfully.");
+        response.writeHead(200, {
+          'Content-Type': 'text/plain',
+          'Access-Control-Allow-Origin': '*'
+        });
+        var data = JSON.stringify(results);
+        response.end(data);
+        console.log("specific location was sent to client.");
+        console.log("////////////////////////////////////////////////");
+
+      };
 
 
 
+
+    })
+});
+
+
+
+app.post('/addLocationToDb', function(request, response) {
+  // Capture the input fields
+  console.log(request.body);
+
+//creating a new object the new location with all the correct values the client sent.
+var newLocation={};
+newLocation.locationName= request.body.locationName;
+newLocation.latitude= request.body.latitude;
+newLocation.longitude= request.body.longitude;
+newLocation.englishName= request.body.englishName;
+newLocation.locationText= request.body.locationText;
+if(request.body.canSwim!==undefined) newLocation.canSwim= request.body.canSwim;
+if(request.body.waterSource!==undefined) newLocation.waterSource= request.body.waterSource;
+if(request.body.costMoney!==undefined) newLocation.costMoney= request.body.costMoney;
+if(request.body.toiletAvailable!==undefined) newLocation.toiletAvailable= request.body.toiletAvailable;
+
+
+  // console.log(request.files);
+if(request.files){
+  var file=request.files.file;
+  var fileName =newLocation.englishName+".jpg";
+
+file.mv('./images/'+fileName);
+
+}
+
+
+
+  var sql = "INSERT INTO locations (`latitude`,`longitude`,`name`,`info`,`englishName`) VALUES (?)";
+
+
+        var values = [
+          newLocation.latitude,newLocation.longitude,newLocation.locationName,newLocation.locationText,newLocation.englishName
+        ]
+        connection.query(sql, [values], function(err, result) {
+          if (err) throw err;
+          console.log("new location was added to the database");
+          response.redirect('/adminHome');
+          response.end();
+        })
+
+});
 
 
 ////////////////////////////////////////////////////////////////////

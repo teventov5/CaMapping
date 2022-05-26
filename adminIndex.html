@@ -163,34 +163,33 @@
 					console.log("marker clicked");
 
 					var markerValues = JSON.stringify({
-						swimmingOption: locationsLoaded.getLocationInfo()[i].swimmingOption,
-						waterSource: locationsLoaded.getLocationInfo()[i].waterSource,
-						costMoney: locationsLoaded.getLocationInfo()[i].costMoney,
-						toiletAvailable: locationsLoaded.getLocationInfo()[i].toiletAvailable,
-
+						values:{
+							swimmingOption: locationsLoaded.getLocationInfo()[i].swimmingOption,
+							waterSource: locationsLoaded.getLocationInfo()[i].waterSource,
+							costMoney: locationsLoaded.getLocationInfo()[i].costMoney,
+							toiletAvailable: locationsLoaded.getLocationInfo()[i].toiletAvailable,
+							englishName: locationsLoaded.getLocationInfo()[i].englishName
+						}
 					});
 					let parsedMarkerValues = JSON.parse(markerValues);
 
 					console.log(parsedMarkerValues);
 
 
-					// infoWindow.setContent(marker.title+'<p id="hook">Hello World!</p>'+marker.info);
 					let tempContent = (
 						'<div id="content" dir="rtl">' +
 						'<div id="siteNotice">' +
 						"</div>" +
 						'<h1 style="color: SeaGreen; id="firstHeading" class="firstHeading">' + marker.title + '</h1>' +
 						'<div id="bodyContent">' +
-						"<p style='font-size:20px'><b>" + "מותר לשחות?" + "\t" + parsedMarkerValues.swimmingOption + "</b>," +
-						"<p style='font-size:20px'><b>" + "מקור מים?" + "\t" + parsedMarkerValues.waterSource + "</b>," +
-						"<p style='font-size:20px'><b>" + "עלות כספית?" + "\t" + parsedMarkerValues.costMoney + "</b>," +
-						"<p style='font-size:20px'><b>" + "שרותים זמינים באתר?" + "\t" + parsedMarkerValues.toiletAvailable + "</b>," +
+						"<p style='font-size:20px'><b>" + "מותר לשחות?" + "\t" + parsedMarkerValues.values.swimmingOption + "</b>." +
+						"<p style='font-size:20px'><b>" + "מקור מים?" + "\t" + parsedMarkerValues.values.waterSource + "</b>." +
+						"<p style='font-size:20px'><b>" + "עלות כספית?" + "\t" + parsedMarkerValues.values.costMoney + "</b>." +
+						"<p style='font-size:20px'><b>" + "שרותים זמינים באתר?" + "\t" + parsedMarkerValues.values.toiletAvailable + "</b>." +
 						// "<p style='font-size:20px'><b>"+marker.info+"</b>,"+
 						'<p><a style="font-size: 30px"+ href=/' + "locations/" + marker.englishName + '?locationValuesFromDb=' + markerValues + '>לחץ כאן למידע מורחב</a>' +
 						"</div>" +
 						"</div>")
-
-
 
 					infoWindow.setContent(tempContent);
 					infoWindow.minHeight = 300;

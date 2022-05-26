@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width,minimum-scale=1">
-	<title>addNewLocation</title>
+	<title>הוספת מיקום חדש</title>
 	<!-- the form awesome library is used to add icons to our form -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
 	<!-- include the stylesheet file -->
@@ -12,15 +12,15 @@
 </head>
 
 <body>
-	<div class="addNewLocation">
-		<h1>addNewLocation</h1>
-		<form action="/regToDb" method="post">
+	<div class="addNewLocation" style="direction:rtl;">
+		<h1>הוספת מיקום חדש</h1>
+		<form action="/addLocationToDb" method="post" enctype="multipart/form-data">
 
 			<label for="locationName">
 				<!-- font awesome icon -->
 				<i class="fas fa-info"></i>
 			</label>
-			<input type="text" name="locationName" placeholder="locationName" id="locationName" required>
+			<input type="text" name="locationName" placeholder="שם המיקום" id="locationName" required>
 
 
 			<label for="latitude">
@@ -37,27 +37,56 @@
 			<input type="text" name="longitude" placeholder="longitude" id="longitude" required>
 
 
-
-			<label for="secretQuestion">
+			<label for="englishName">
 				<!-- font awesome icon -->
 				<i class="fas fa-info"></i>
 			</label>
-			<input type="text" name="secretQuestion" placeholder="secretQuestion" id="secretQuestion" required>
+			<input type="text" name="englishName" placeholder="שם באנגלית ללא רווחים" id="englishName" required>
 
-			<label for="secretAnswer">
+
+
+			<label for="locationText">
 				<!-- font awesome icon -->
 				<i class="fas fa-info"></i>
 			</label>
-			<input type="text" name="secretAnswer" placeholder="secretAnswer" id="secretAnswer" required>
+			<input type="text" name="locationText" placeholder="טקסט לתיאור המיקום" id="locationText" required>
+
+			<div class="checkboxes" style="direction:rtl;">
+
+			מותר לשחות -->
+        <input type="checkbox" name="canSwim"
+            id="canSwim" value="כן" checked >
+						<br>
+        מקור מים -->
+
+        <input type="checkbox" name="waterSource"
+				id="waterSource" value="כן">
+        <br>
+
+        עלות כספית -->
+        <input type="checkbox" name="costMoney"
+				id="costMoney" value="כן">
+        <br>
+
+        שירותים זמינים באתר -->
+        <input type="checkbox" name="toiletAvailable"
+					id="toiletAvailable" value="כן">
+        <br>
+			</div>
+
+			<br>
+
+		צירוף תמונה	<input type="file" name="file" id="fileToUpload"/>
 
 
-			<input type="submit" value="Register">
+
+			<input type="submit" value="הוספה">
 		</form>
 
 
 
 		<form action="/" method="get">
-			<input type="submit" value="Press if you want to go back to login page">
+			<input type="submit" value="לחץ כאן לחזרה למפה הראשית">
 		</form>
 
 
