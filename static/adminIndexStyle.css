@@ -1,0 +1,21 @@
+#bringToCenter {
+  text-align: center;
+  position: absolute;
+  height: 75px;
+  width: 75px;
+  top: 350px;
+  left: 10px;
+  line-height: 20px;
+  background: url("/images/centerIcon.jpg")no-repeat;
+  background-size: contain;
+  cursor:pointer;
+  }
+
+#searchInput{
+  width: 220px;
+  height: 30px;
+  font-size: 20px;
+  direction:rtl;
+  position: absolute;
+
+}

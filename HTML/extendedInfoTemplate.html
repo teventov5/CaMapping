@@ -9,14 +9,9 @@
 
 <body>
 
-
-
-  <div class="wholePage">
-
     <div class="picture">
       <img src="" id="imageBox" alt="location picture"; width="800" height="500" align="left"  />
     </div>
-
 
     <div class="wrapText" style="direction:rtl; max-width: 700px ">
 
@@ -26,18 +21,20 @@
         </p>
 
 
-      <p>לחזרה למפה הראשית: <a href="/home">לחץ כאן</a></p>
+      <p>לחזרה למפה הראשית: <a href="/home">לחץ כאן </a></p>
 
       <div>
         <ul>
-
+          <li id=swimmingOption>מותר לשחות: </li>
+          <li id=waterSource>מקור מים: </li>
+          <li id=costMoney>עלות כספית: </li>
+          <li id=toiletAvailable>שירותים זמינים באתר: </li>
         </ul>
       </div>
 
     </div>
 
 
-  </div>
 
 
 <!-- the following script initializes the variables with relavent info from index page and from db  -->
@@ -72,8 +69,12 @@ xhr.addEventListener("readystatechange", function() {
     specificLocationValues=JSON.parse(this.responseText)[0]
     document.getElementById('title').innerHTML=specificLocationValues.name;
     document.getElementById('text').innerHTML=specificLocationValues.info;
+    document.getElementById('swimmingOption').innerHTML=document.getElementById('swimmingOption').innerHTML+specificLocationValues.swimmingOption;
+    document.getElementById('waterSource').innerHTML=document.getElementById('waterSource').innerHTML+specificLocationValues.waterSource;
+    document.getElementById('costMoney').innerHTML=document.getElementById('costMoney').innerHTML+specificLocationValues.costMoney;
+    document.getElementById('toiletAvailable').innerHTML=document.getElementById('toiletAvailable').innerHTML+specificLocationValues.toiletAvailable;
 
-    // console.log(specificLocationValues);
+
   }
 });
 
@@ -84,34 +85,50 @@ xhr.send(data);
 
 
 
+
+
+
+
   </script>
 
 
 <!-- the following script takes the info sent from the index page and add it to the template -->
+  <script>
+
+
+
+
+  //
+  // var node = document.createElement('li');
+  // node.appendChild(document.createTextNode('מותר לשחות: ' + specificLocationValues.swimmingOption));
+  // document.querySelector('ul').appendChild(node);
+  //
+  // var node2 = document.createElement('li');
+  // node2.appendChild(document.createTextNode('מקור מים: ' + specificLocationValues.waterSource));
+  // document.querySelector('ul').appendChild(node2);
+  //
+  // var node3 = document.createElement('li');
+  // node3.appendChild(document.createTextNode('עלות כספית: ' + specificLocationValues.costMoney));
+  // document.querySelector('ul').appendChild(node3);
+  //
+  //
+  // var node4 = document.createElement('li');
+  // node4.appendChild(document.createTextNode('שירותים זמינים באתר: ' + specificLocationValues.toiletAvailable));
+  // document.querySelector('ul').appendChild(node4);
+  //
+  //
+  //   //changing the text to the info text received from the db
+
+
+
+
+
+  </script>
 
   <script>
-    var node = document.createElement('li');
-    node.appendChild(document.createTextNode('מותר לשחות: ' + locationValuesFromIndex.values.swimmingOption));
-    document.querySelector('ul').appendChild(node);
 
-    var node2 = document.createElement('li');
-    node2.appendChild(document.createTextNode('מקור מים: ' + locationValuesFromIndex.values.waterSource));
-    document.querySelector('ul').appendChild(node2);
-
-    var node3 = document.createElement('li');
-    node3.appendChild(document.createTextNode('עלות כספית: ' + locationValuesFromIndex.values.costMoney));
-    document.querySelector('ul').appendChild(node3);
-
-
-    var node4 = document.createElement('li');
-    node4.appendChild(document.createTextNode('שירותים זמינים באתר: ' + locationValuesFromIndex.values.toiletAvailable));
-    document.querySelector('ul').appendChild(node4);
-
-
-
-    //changing the text to the info text received from the db
-
-
+  // document.getElementById('swimmingOption').innerHTML=document.getElementById('swimmingOption').innerHTML+specificLocationValues.swimmingOption;
+  // console.log(specificLocationValues);
 
   </script>
 

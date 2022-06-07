@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>CaMapper-Admin privileges</title>
+	<meta name="viewport" content="initial-scale=1.0">
+	<meta charset="utf-8">
+	<style>
+		#map {
+			height: 100%;
+		}
+
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+	</style>
+	<link href="/adminIndexStyle.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+
+
+
+	<!-- Search input -->
+	<input id="searchInput" class="controls" type="text" placeholder="הכנס מיקום">
+
+	<!-- Google map -->
+	<div id="map"></div>
+
+	<!-- Display geolocation data -->
+	<!-- <ul class="geo-data">
+		<li>Full Address: <span id="location"></span></li>
+		<li>Postal Code: <span id="postal_code"></span></li>
+		<li>Country: <span id="country"></span></li>
+		<li>Latitude: <span id="lat"></span></li>
+		<li>Longitude: <span id="lon"></span></li>
+	</ul> -->
+
+
+
+	<button id="bringToCenter" class="btn"></i></button>
+	<script>
+		markerIcon = 'images/markerIcon.png';
+
+
+		var campingSiteInfo = {
+			siteName: 'defaultSiteName',
+			costMoney: 'Default-free',
+			fireAllowed: "Default-No",
+			toString: function() {
+				return ("" + this.siteName + "\n" +
+					this.costMoney + "\n" +
+					this.fireAllowed + "\n");
+
+			}
+		}
+
+		let map;
+		var infoWindowLatLang;
+		var specificPlace = Object.create(campingSiteInfo);
+
+		function initMap() {
+			//setting the map starting position and zoom.
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {
+					lat: 32.01345951663715,
+					lng: 34.77160817977713
+				},
+				zoom: 7
+			});
+
+
+			var input = document.getElementById('searchInput');
+			map.controls[google.maps.ControlPosition.TOP_RIGHT].push(input);
+
+			var autocomplete = new google.maps.places.Autocomplete(input);
+			autocomplete.bindTo('bounds', map);
+
+			var infowindow = new google.maps.InfoWindow();
+			var marker = new google.maps.Marker({
+				map: map,
+				anchorPoint: new google.maps.Point(0, -29)
+			});
+
+			autocomplete.addListener('place_changed', function() {
+				infowindow.close();
+				marker.setVisible(false);
+				var place = autocomplete.getPlace();
+				if (!place.geometry) {
+					window.alert("Autocomplete's returned place contains no geometry");
+					return;
+				}
+
+				// If the place has a geometry, then present it on a map.
+				if (place.geometry.viewport) {
+					map.fitBounds(place.geometry.viewport);
+				} else {
+					map.setCenter(place.geometry.location);
+					map.setZoom(17);
+				}
+				marker.setIcon(({
+					url: place.icon,
+					size: new google.maps.Size(71, 71),
+					origin: new google.maps.Point(0, 0),
+					anchor: new google.maps.Point(17, 34),
+					scaledSize: new google.maps.Size(35, 35)
+				}));
+				marker.setPosition(place.geometry.location);
+				marker.setVisible(true);
+
+				var address = '';
+				if (place.address_components) {
+					address = [
+						(place.address_components[0] && place.address_components[0].short_name || ''),
+						(place.address_components[1] && place.address_components[1].short_name || ''),
+						(place.address_components[2] && place.address_components[2].short_name || '')
+					].join(' ');
+				}
+
+
+
+				const newLatLng = {
+					lat: place.geometry.location.lat(),
+					lng: place.geometry.location.lng()
+				};
+
+				const source = JSON.stringify(newLatLng);
+
+
+
+
+
+					var locationTempContent = '<div id="content" dir="rtl">' +
+					'<h2 style="color: SeaGreen; id="latitudeTitle" class="firstHeading">'+address+
+					 '<h3 style="color: #FF4500; id="latitudeTitle" class="firstHeading">'+"latitude: " + place.geometry.location.lat().toString() + "<br>" +
+						'<h3 style="color: #FF4500; id="longitudeTitle" class="longitudeTitle">'+"longitude: " + place.geometry.location.lng().toString() + "<br>" +
+						'<p><a style="font-size: 22px"+ href=/' + "addNewLocation/" + '?latLngvalue=' + encodeURIComponent(source) + '>הוספת המיקום לבסיס הנתונים</a>'+
+						"</div>";
+
+
+
+				// var locationTempContent = "lat:" + place.geometry.location.lat().toString() + "<br>" +
+				// 	"lng:" + place.geometry.location.lng() + "<br><br>" +
+				// 	'<p><a style="font-size: 22px"+ href=/' + "addNewLocation/" + '?latLngvalue=' + encodeURIComponent(source) + '>הוספת המיקום לבסיס הנתונים</a>';
+
+
+				infowindow.setContent(locationTempContent);
+
+
+				infowindow.open(map, marker);
+
+
+				//not sure i want this to add the the bottom of the page so its communted out for now.
+
+				// Location details
+				// 	for (var i = 0; i < place.address_components.length; i++) {
+				// 		if (place.address_components[i].types[0] == 'postal_code') {
+				// 			document.getElementById('postal_code').innerHTML = place.address_components[i].long_name;
+				// 		}
+				// 		if (place.address_components[i].types[0] == 'country') {
+				// 			document.getElementById('country').innerHTML = place.address_components[i].long_name;
+				// 		}
+				// 	}
+				// 	document.getElementById('location').innerHTML = place.formatted_address;
+				// 	document.getElementById('lat').innerHTML = place.geometry.location.lat();
+				// 	document.getElementById('lon').innerHTML = place.geometry.location.lng();
+			});
+
+
+
+			//setting a center button that will get us back to the begininng position.
+
+			const centerButton = document.querySelector('#bringToCenter');
+
+			centerButton.addEventListener('click', function(e) {
+				e.preventDefault();
+				map.setCenter({
+					lat: 32.01345951663715,
+					lng: 34.77160817977713
+				});
+			});
+
+
+			//getting coaordinates from pressing on screen.
+
+			map.addListener('click', function(mapsMouseEvent) {
+				if (infoWindowLatLang) infoWindowLatLang.close();
+
+				infoWindowLatLang = new google.maps.InfoWindow({
+					position: mapsMouseEvent.latLng
+				});
+
+				//stringifying the curr coaordinates so i could transsfer it to the add location page
+
+
+				const newLatLng = {
+					lat: mapsMouseEvent.latLng.lat(),
+					lng: mapsMouseEvent.latLng.lng()
+				};
+
+				const source = JSON.stringify(newLatLng);
+
+
+
+				var locationTempContent = '<div id="content" dir="rtl">' +
+				 '<h3 style="color: #FF4500; id="latitudeTitle" class="firstHeading">'+"latitude: " + mapsMouseEvent.latLng.lat().toString() + "<br>" +
+					'<h3 style="color: #FF4500; id="longitudeTitle" class="longitudeTitle">'+"longitude: " + mapsMouseEvent.latLng.lng().toString() + "<br>" +
+					'<p><a style="font-size: 22px"+ href=/' + "addNewLocation/" + '?latLngvalue=' + encodeURIComponent(source) + '>הוספת המיקום לבסיס הנתונים</a>'+
+					"</div>";
+
+
+
+				infoWindowLatLang.setContent(locationTempContent);
+				infoWindowLatLang.open(map);
+			});
+
+
+
+			//adding an add location option so a user can add a specific location.
+
+			function MarkerControl(controlDiv, map) {
+				const controlUI = document.createElement('div');
+				controlUI.style.backgroundColor = '#fff';
+				controlUI.style.border = '2px solid #fff';
+				controlUI.style.borderRadius = '3px';
+				controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+				controlUI.style.cursor = 'pointer';
+				controlUI.style.margin = '10px';
+				controlDiv.appendChild(controlUI);
+
+				const controlText = document.createElement('img');
+				controlText.style.padding = '5px';
+				controlText.title = 'Click to add a new location to the database and map';
+				controlText.src = 'http://maps.google.com/mapfiles/kml/shapes/campfire.png';
+				controlText.size = '10px'
+				controlUI.appendChild(controlText);
+
+				controlUI.addEventListener('click', function() {
+
+						//add click actions here
+
+						document.location.href = '/addNewLocation';
+
+					}
+
+				);
+			}
+
+
+
+
+
+
+
+			////////////////////////////////////////////////////
+
+			const markerControlDiv = document.createElement('div');
+			const markerControl = new MarkerControl(markerControlDiv, map);
+			markerControlDiv.index = 1;
+			map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(markerControlDiv);
+
+
+
+			// Add multiple markers to map
+			var markersLocations = locationsLoaded.getLatLang();
+			const infoWindow = new google.maps.InfoWindow({
+				content: "empty for now",
+				minWidth: 200,
+				minHeight: 200,
+			});
+
+			for (let i = 0; i < markersLocations.length; i++) {
+
+				let currMarkerPosition = markersLocations[i];
+
+				let marker = new google.maps.Marker({
+					position: currMarkerPosition,
+					icon: markerIcon,
+					title: locationsLoaded.getLocationInfo()[i].name,
+					info: locationsLoaded.getLocationInfo()[i].info,
+					englishName: locationsLoaded.getLocationInfo()[i].englishName,
+					swimmingOption: locationsLoaded.getLocationInfo()[i].swimmingOption,
+					waterSource: locationsLoaded.getLocationInfo()[i].waterSource,
+					costMoney: locationsLoaded.getLocationInfo()[i].costMoney,
+					toiletAvailable: locationsLoaded.getLocationInfo()[i].toiletAvailable,
+					map: map
+				});
+
+
+
+				marker.addListener('click', function() {
+					console.log("marker clicked");
+
+					var markerValues = JSON.stringify({
+						values: {
+							englishName: locationsLoaded.getLocationInfo()[i].englishName
+						}
+					});
+					let parsedMarkerValues = JSON.parse(markerValues);
+
+					console.log(parsedMarkerValues);
+
+
+					let tempContent = (
+						'<div id="content" dir="rtl">' +
+						'<div id="siteNotice">' +
+						"</div>" +
+						'<h1 style="color: SeaGreen; id="firstHeading" class="firstHeading">' + marker.title + '</h1>' +
+						'<div id="bodyContent">' +
+						"<p style='font-size:20px'><b>" + "מותר לשחות?" + "\t" + locationsLoaded.getLocationInfo()[i].swimmingOption + "</b>." +
+						"<p style='font-size:20px'><b>" + "מקור מים?" + "\t" + locationsLoaded.getLocationInfo()[i].waterSource + "</b>." +
+						"<p style='font-size:20px'><b>" + "עלות כספית?" + "\t" + locationsLoaded.getLocationInfo()[i].costMoney + "</b>." +
+						"<p style='font-size:20px'><b>" + "שרותים זמינים באתר?" + "\t" + locationsLoaded.getLocationInfo()[i].toiletAvailable + "</b>." +
+						// "<p style='font-size:20px'><b>"+marker.info+"</b>,"+
+						'<p><a style="font-size: 30px"+ href=/' + "locations/" + marker.englishName + '?locationValuesFromDb=' + markerValues + '>לחץ כאן למידע מורחב</a>' +
+						"</div>" +
+						"</div>")
+
+					infoWindow.setContent(tempContent);
+					infoWindow.minHeight = 300;
+					infoWindow.minWidth = 300;
+
+					infoWindow.open(map, marker);
+
+				});
+
+			}
+		}
+	</script>
+
+
+	<script>
+		//script to load markers from the Db into a variable called locationsLoaded
+
+		function httpGet(theUrl) {
+			let xmlHttpReq = new XMLHttpRequest();
+			xmlHttpReq.open("GET", theUrl, false);
+			xmlHttpReq.send(null);
+			return xmlHttpReq.responseText;
+		}
+		var locationsLoaded = JSON.parse(httpGet("http://localhost:3000/getLocations"));
+
+
+		//parsing the information received from DB into object i can use
+
+		locationsLoaded.getLatLang = function() {
+
+			var latLangArr = [];
+
+			this.forEach(location => {
+				latLangArr.push({
+					lat: parseFloat(location.latitude),
+					lng: parseFloat(location.longitude)
+				});
+			});
+			return latLangArr;
+		}
+
+		locationsLoaded.getLocationInfo = function() {
+
+			var locationInfoArr = [];
+
+			this.forEach(location => {
+				locationInfoArr.push({
+					name: location.name,
+					info: location.info,
+					englishName: location.englishName,
+					swimmingOption: location.swimmingOption,
+					waterSource: location.waterSource,
+					costMoney: location.costMoney,
+					toiletAvailable: location.toiletAvailable
+				});
+			});
+			return locationInfoArr;
+
+		}
+	</script>
+
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2EAjv1tOnx4DCctrhz-mNsDrfaidp_yI&callback=initMap&libraries=places" async defer></script>
+
+
+
+
+
+</body>
+
+</html>

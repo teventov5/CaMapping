@@ -53,46 +53,52 @@
 
 			<div class="checkboxes" style="direction:rtl;">
 
-			מותר לשחות -->
-        <input type="checkbox" name="canSwim"
-            id="canSwim" value="כן" checked >
-						<br>
-        מקור מים -->
+				מותר לשחות -->
+				<input type="checkbox" name="canSwim" id="canSwim" value="כן" checked>
+				<br>
+				מקור מים -->
 
-        <input type="checkbox" name="waterSource"
-				id="waterSource" value="כן">
-        <br>
+				<input type="checkbox" name="waterSource" id="waterSource" value="כן">
+				<br>
 
-        עלות כספית -->
-        <input type="checkbox" name="costMoney"
-				id="costMoney" value="כן">
-        <br>
+				עלות כספית -->
+				<input type="checkbox" name="costMoney" id="costMoney" value="כן">
+				<br>
 
-        שירותים זמינים באתר -->
-        <input type="checkbox" name="toiletAvailable"
-					id="toiletAvailable" value="כן">
-        <br>
+				שירותים זמינים באתר -->
+				<input type="checkbox" name="toiletAvailable" id="toiletAvailable" value="כן">
+				<br>
 			</div>
-
 			<br>
-
-		צירוף תמונה	<input type="file" name="file" id="fileToUpload"/>
-
-
-
+			צירוף תמונה <input type="file" name="file" id="fileToUpload" />
 			<input type="submit" value="הוספה">
 		</form>
-
-
-
-		<form action="/" method="get">
+		<form action="/adminHome" method="get">
 			<input type="submit" value="לחץ כאן לחזרה למפה הראשית">
 		</form>
-
-
-
-
 	</div>
+
+
+
+	<script>
+
+	  const queryString = window.location.search;
+
+	  const urlParams = new URLSearchParams(queryString);
+
+		var search = location.search.substring(1);
+		// var coaordinatesFromIndex = JSON.parse('{"' + decodeURIComponent(search).replace(/"/g, '\\"').replace(/&/g,'","').replace(/=/g,'":"') + '"}');
+
+ 		const coaordinatesToAdd = JSON.parse(urlParams.get('latLngvalue'))  //getting the locations  strigified at index.html
+if(coaordinatesToAdd){
+		document.getElementById('latitude').value = coaordinatesToAdd.lat;
+		document.getElementById('longitude').value = coaordinatesToAdd.lng;
+}
+
+	console.log(coaordinatesToAdd);
+
+
+	</script>
 </body>
 
 </html>
