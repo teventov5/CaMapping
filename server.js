@@ -697,7 +697,7 @@ app.post('/addLocationToDb', function(request, response) {
   connection.query(sql, [values], function(err, result) {
     if (err) throw err;
     console.log("new location was added to the database");
-    response.redirect('/HTML/adminHome');
+    response.redirect('/adminHome');
     response.end();
   })
 });
