@@ -87,7 +87,6 @@
 	  const urlParams = new URLSearchParams(queryString);
 
 		var search = location.search.substring(1);
-		// var coaordinatesFromIndex = JSON.parse('{"' + decodeURIComponent(search).replace(/"/g, '\\"').replace(/&/g,'","').replace(/=/g,'":"') + '"}');
 
  		const coaordinatesToAdd = JSON.parse(urlParams.get('latLngvalue'))  //getting the locations  strigified at index.html
 if(coaordinatesToAdd){

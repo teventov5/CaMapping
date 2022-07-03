@@ -356,12 +356,12 @@ app.use(express.urlencoded({
 }));
 
 
-//to enable body parsing
+//to enable messeage body parsing
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-//folder with static files such as css and images will be static
+//a folder with static files such as css and images will be static (also named static)
 
 app.use(express.static(path.join(__dirname, 'static')));
 app.use('/images', express.static(path.join(__dirname, 'images')));

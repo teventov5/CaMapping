@@ -32,15 +32,6 @@
 	<!-- Google map -->
 	<div id="map"></div>
 
-	<!-- Display geolocation data -->
-	<!-- <ul class="geo-data">
-		<li>Full Address: <span id="location"></span></li>
-		<li>Postal Code: <span id="postal_code"></span></li>
-		<li>Country: <span id="country"></span></li>
-		<li>Latitude: <span id="lat"></span></li>
-		<li>Longitude: <span id="lon"></span></li>
-	</ul> -->
-
 
 
 	<button id="bringToCenter" class="btn"></i></button>
@@ -74,7 +65,7 @@
 				zoom: 7
 			});
 
-
+			//autocomplete search code
 			var input = document.getElementById('searchInput');
 			map.controls[google.maps.ControlPosition.TOP_RIGHT].push(input);
 
@@ -135,18 +126,13 @@
 
 
 
-					var locationTempContent = '<div id="content" dir="rtl">' +
-					'<h2 style="color: SeaGreen; id="latitudeTitle" class="firstHeading">'+address+
-					 '<h3 style="color: #FF4500; id="latitudeTitle" class="firstHeading">'+"latitude: " + place.geometry.location.lat().toString() + "<br>" +
-						'<h3 style="color: #FF4500; id="longitudeTitle" class="longitudeTitle">'+"longitude: " + place.geometry.location.lng().toString() + "<br>" +
-						'<p><a style="font-size: 22px"+ href=/' + "addNewLocation/" + '?latLngvalue=' + encodeURIComponent(source) + '>הוספת המיקום לבסיס הנתונים</a>'+
-						"</div>";
+				var locationTempContent = '<div id="content" dir="rtl">' +
+					'<h2 style="color: SeaGreen; id="latitudeTitle" class="firstHeading">' + address +
+					'<h3 style="color: #FF4500; id="latitudeTitle" class="firstHeading">' + "latitude: " + place.geometry.location.lat().toString() + "<br>" +
+					'<h3 style="color: #FF4500; id="longitudeTitle" class="longitudeTitle">' + "longitude: " + place.geometry.location.lng().toString() + "<br>" +
+					'<p><a style="font-size: 22px"+ href=/' + "addNewLocation/" + '?latLngvalue=' + encodeURIComponent(source) + '>הוספת המיקום לבסיס הנתונים</a>' +
+					"</div>";
 
-
-
-				// var locationTempContent = "lat:" + place.geometry.location.lat().toString() + "<br>" +
-				// 	"lng:" + place.geometry.location.lng() + "<br><br>" +
-				// 	'<p><a style="font-size: 22px"+ href=/' + "addNewLocation/" + '?latLngvalue=' + encodeURIComponent(source) + '>הוספת המיקום לבסיס הנתונים</a>';
 
 
 				infowindow.setContent(locationTempContent);
@@ -155,20 +141,8 @@
 				infowindow.open(map, marker);
 
 
-				//not sure i want this to add the the bottom of the page so its communted out for now.
 
-				// Location details
-				// 	for (var i = 0; i < place.address_components.length; i++) {
-				// 		if (place.address_components[i].types[0] == 'postal_code') {
-				// 			document.getElementById('postal_code').innerHTML = place.address_components[i].long_name;
-				// 		}
-				// 		if (place.address_components[i].types[0] == 'country') {
-				// 			document.getElementById('country').innerHTML = place.address_components[i].long_name;
-				// 		}
-				// 	}
-				// 	document.getElementById('location').innerHTML = place.formatted_address;
-				// 	document.getElementById('lat').innerHTML = place.geometry.location.lat();
-				// 	document.getElementById('lon').innerHTML = place.geometry.location.lng();
+
 			});
 
 
@@ -206,11 +180,11 @@
 				const source = JSON.stringify(newLatLng);
 
 
-
+//creates the temp location when pressing on an empty place on the map as an admin.
 				var locationTempContent = '<div id="content" dir="rtl">' +
-				 '<h3 style="color: #FF4500; id="latitudeTitle" class="firstHeading">'+"latitude: " + mapsMouseEvent.latLng.lat().toString() + "<br>" +
-					'<h3 style="color: #FF4500; id="longitudeTitle" class="longitudeTitle">'+"longitude: " + mapsMouseEvent.latLng.lng().toString() + "<br>" +
-					'<p><a style="font-size: 22px"+ href=/' + "addNewLocation/" + '?latLngvalue=' + encodeURIComponent(source) + '>הוספת המיקום לבסיס הנתונים</a>'+
+					'<h3 style="color: #FF4500; id="latitudeTitle" class="firstHeading">' + "latitude: " + mapsMouseEvent.latLng.lat().toString() + "<br>" +
+					'<h3 style="color: #FF4500; id="longitudeTitle" class="longitudeTitle">' + "longitude: " + mapsMouseEvent.latLng.lng().toString() + "<br>" +
+					'<p><a style="font-size: 22px"+ href=/' + "addNewLocation/" + '?latLngvalue=' + encodeURIComponent(source) + '>הוספת המיקום לבסיס הנתונים</a>' +
 					"</div>";
 
 
@@ -221,7 +195,7 @@
 
 
 
-			//adding an add location option so a user can add a specific location.
+			//adding an add location option so a user can add a specific location without search.
 
 			function MarkerControl(controlDiv, map) {
 				const controlUI = document.createElement('div');
@@ -242,7 +216,6 @@
 
 				controlUI.addEventListener('click', function() {
 
-						//add click actions here
 
 						document.location.href = '/addNewLocation';
 
@@ -274,6 +247,9 @@
 				minHeight: 200,
 			});
 
+			//this loop will go over each of the markers received from the sever and add them to the map.
+			//the loop will also store some of the values in an object so it could be sent as UriParameters.
+
 			for (let i = 0; i < markersLocations.length; i++) {
 
 				let currMarkerPosition = markersLocations[i];
@@ -304,6 +280,8 @@
 					let parsedMarkerValues = JSON.parse(markerValues);
 
 					console.log(parsedMarkerValues);
+
+					//each marker on the map will have this tempContent with relevent values once clicked.
 
 
 					let tempContent = (
@@ -346,7 +324,7 @@
 		var locationsLoaded = JSON.parse(httpGet("http://localhost:3000/getLocations"));
 
 
-		//parsing the information received from DB into object i can use
+		//parsing the information received from DB into objects i can use
 
 		locationsLoaded.getLatLang = function() {
 
